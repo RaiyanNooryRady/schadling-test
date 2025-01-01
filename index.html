@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schädlings-Test</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --danger-color: #dc2626;
+            --warning-color: #ea580c;
+            --caution-color: #eab308;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f9ff;
+            font-size: 16px;
+        }
+
+        .progress-container {
+            width: 100%;
+            background-color: #e5e7eb;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            height: 20px;
+            background-color: var(--primary-color);
+            border-radius: 8px;
+            transition: width 0.5s ease-in-out;
+            position: relative;
+        }
+
+        .progress-text {
+            position: absolute;
+            right: 10px;
+            color: white;
+            font-size: 12px;
+            line-height: 20px;
+        }
+
+        .question-container, .results-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .question-container.active, .results-container.active {
+            display: block;
+        }
+.btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 0;
+            transition: background-color 0.3s;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background-color: #1d4ed8;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 10px;
+            background-color: #f8fafc;
+            border-radius: 4px;
+        }
+
+        .checkbox-label:hover {
+            background-color: #f0f9ff;
+        }
+
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+        }
+
+        h2 {
+            color: #1f2937;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: #374151;
+            font-size: 20px;
+            margin: 15px 0;
+        }
+
+        p {
+            color: #4b5563;
+            margin-bottom: 15px;
+        }
+
+        .result-item {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .probability-high {
+            background-color: #fee2e2;
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .probability-medium {
+            background-color: #ffedd5;
+            border-left: 4px solid var(--warning-color);
+        }
+
+        .probability-low {
+            background-color: #fef9c3;
+            border-left: 4px solid var(--caution-color);
+        }
+
+        .urgency {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+            color: white;
+            font-weight: bold;
+        }
+
+        .urgency-high {
+            background-color: var(--danger-color);
+        }
+
+        .urgency-medium {
+            background-color: var(--warning-color);
+        }
+
+        .urgency-low {
+            background-color: var(--caution-color);
+        }
+
+        .pest-info {
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #f8fafc;
+            border-radius: 8px;
+        }
+
+        .pest-info ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .pest-info li {
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .pest-info li:before {
+            content: "•";
+            color: var(--primary-color);
+            position: absolute;
+            left: 0;
+        }
+
+        .probability-percentage {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1f2937;
+            margin: 10px 0;
+        }
+
+        .cta-button {
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            padding: 15px 30px;
+            border-radius: 4px;
+            display: block;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 20px 0;
+            transition: background-color 0.3s;
+        }
+
+        .restart-button {
+            background-color: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 4px;
+            display: block;
+            text-align: center;
+            font-size: 16px;
+            margin: 10px 0;
+            transition: all 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar" style="width: 20%">
+            <span class="progress-text">20%</span>
+        </div>
+    </div>
+
+    <!-- Frage 1 -->
+    <div class="question-container active" id="question1">
+        <h2>Schädlings-Test</h2>
+        <h3>Haben Sie den Schädling gesehen?</h3>
+        <button type="button" class="btn" onclick="answerQuestion(1, 'yes')">Ja</button>
+        <button type="button" class="btn" onclick="answerQuestion(1, 'no')">Nein</button>
+    </div>
+
+    <!-- Frage 2 -->
+    <div class="question-container" id="question2">
+        <h2>Wie macht sich der Schädlingsbefall bemerkbar?</h2>
+        <p>Mehrere Antworten möglich</p>
+        <div class="checkbox-group">
+            <label class="checkbox-label">
+                <input type="checkbox" name="signs" value="bites"> Bissspuren/Stiche am Körper
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" name="signs" value="itching"> Juckende Stellen
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" name="signs" value="rash"> Rötungen/Ausschläge
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" name="signs" value="damage"> Materialschäden/Bissspuren an Gegenständen
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" name="signs" value="holes"> Löcher in Textilien/Kleidung
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" name="signs" value="food"> Beschädigte Lebensmittelverpackungen
+            </label>
+        </div>
+        <button type="button" class="btn" onclick="answerQuestion(2)">Weiter</button>
+    </div>
+
+    <!-- Frage 3 -->
+    <div class="question-container" id="question3">
+        <h2>Wie sieht der Schädling aus?</h2>
+        <button type="button" class="btn" onclick="answerQuestion(3, 'small-brown')">Klein und braun</button>
+        <button type="button" class="btn" onclick="answerQuestion(3, 'flying-yellow')">Fliegend und gelblich</button>
+        <button type="button" class="btn" onclick="answerQuestion(3, 'flying-dark')">Fliegend und dunkel</button>
+        <button type="button" class="btn" onclick="answerQuestion(3, 'small-gray')">Klein und grau</button>
+        <button type="button" class="btn" onclick="answerQuestion(3, 'furry')">Pelzig</button>
+    </div>
+
+    <!-- Frage 4 -->
+    <div class="question-container" id="question4">
+        <h2>Haben Sie Haustiere?</h2>
+        <button type="button" class="btn" onclick="answerQuestion(4, 'yes')">Ja</button>
+        <button type="button" class="btn" onclick="answerQuestion(4, 'no')">Nein</button>
+    </div>
+
+    <!-- Frage 5 -->
+    <div class="question-container" id="question5">
+        <h2>Wo wurde der Befall festgestellt?</h2>
+        <p>Mehrere Antworten möglich</p>
+        <div class="checkbox-group">
+            <label class="checkbox-label">
+                <input type="checkbox" name="location" value="bedroom"> Schlafzimmer
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" name="location" value="kitchen"> Küche
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" name="location" value="basement"> Keller
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" name="location" value="attic"> Dachboden
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" name="location" value="garden"> Garten
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" name="location" value="entire"> Gesamte Wohnung
+            </label>
+        </div>
+        <button type="button" class="btn" onclick="calculateAndShowResults()">Ergebnisse anzeigen</button>
+    </div>
+
+    <!-- Ergebnisse -->
+    <div class="results-container" id="results"></div>
+<script>
+    let seenPest = null;
+    const testData = {
+        answers: {},
+        currentQuestion: 1
+    };
+
+    const pestData = {
+        bettwanzen: {
+            maxPoints: 27,
+            characteristics: {
+                verhalten: "Nachtaktiv, verstecken sich in Ritzen und Spalten",
+                gefahr: "Stechender Parasit, starke psychische Belastung",
+                behandlung: "Professionelle Wärmebehandlung, spezielle Insektizide"
+            },
+            urgency: "high"
+        },
+        ratten: {
+            maxPoints: 22,
+            characteristics: {
+                verhalten: "Nachtaktiv, sehr intelligent, leben in Kolonien",
+                gefahr: "Übertragung von Krankheiten, Materialschäden",
+                behandlung: "Professionelle Schädlingsbekämpfung erforderlich"
+            },
+            urgency: "high"
+        },
+        mause: {
+            maxPoints: 21,
+            characteristics: {
+                verhalten: "Nachtaktiv, nagen an Materialien",
+                gefahr: "Übertragung von Krankheiten, Materialschäden",
+                behandlung: "Kombinierte Köder- und Fallenstellung"
+            },
+            urgency: "high"
+        },
+        schaben: {
+            maxPoints: 22,
+            characteristics: {
+                verhalten: "Nachtaktiv, sehr schnelle Vermehrung",
+                gefahr: "Übertragung von Krankheiten, Allergien",
+                behandlung: "Professionelle Insektizidbehandlung"
+            },
+            urgency: "high"
+        },
+        flohe: {
+            maxPoints: 23,
+            characteristics: {
+                verhalten: "Springen, verstecken sich in Teppichen und Polstern",
+                gefahr: "Übertragung von Krankheiten, starker Juckreiz",
+                behandlung: "Kombinierte Umgebungs- und Tierbehandlung"
+            },
+            urgency: "high"
+        },
+        milben: {
+            maxPoints: 20,
+            characteristics: {
+                verhalten: "Mikroskopisch klein, leben in Matratzen und Polstern",
+                gefahr: "Allergien, Hautirritation",
+                behandlung: "Spezielle Reinigung, Encasings"
+            },
+            urgency: "high"
+        },
+        motten: {
+            maxPoints: 17,
+            characteristics: {
+                verhalten: "Bevorzugen Dunkelheit, befallen Textilien",
+                gefahr: "Materialschäden an Kleidung und Textilien",
+                behandlung: "Pheromonfallen und Textilreinigung"
+            },
+            urgency: "medium"
+        },
+        fliegen: {
+            maxPoints: 17,
+            characteristics: {
+                verhalten: "Aktiv bei Tageslicht, stark hygienerelevant",
+                gefahr: "Übertragung von Krankheitserregern",
+                behandlung: "Hygienemaßnahmen und Insektizide"
+            },
+            urgency: "high"
+        }
+    };
+function updateProgress(currentStep) {
+        const adjustedTotal = seenPest === false ? 4 : 5;
+        const progress = Math.min(Math.round((currentStep / adjustedTotal) * 100), 100);
+        document.getElementById('progressBar').style.width = progress + '%';
+        document.querySelector('.progress-text').textContent = progress + '%';
+    }
+
+    function answerQuestion(questionNumber, answer) {
+        document.getElementById('question' + questionNumber).classList.remove('active');
+        
+        if (questionNumber === 2) {
+            const selectedSigns = Array.from(document.querySelectorAll('input[name="signs"]:checked'))
+                .map(checkbox => checkbox.value);
+            testData.answers.signs = selectedSigns;
+            if(selectedSigns.length === 0) {
+                testData.answers.signs = ['none'];
+            }
+        } else {
+            testData.answers['q' + questionNumber] = answer;
+        }
+
+        if (questionNumber === 1) {
+            seenPest = answer === 'yes';
+        }
+
+        let nextQuestion = questionNumber + 1;
+        if (!seenPest && questionNumber === 1) {
+            nextQuestion = 2;
+        } else if (!seenPest && questionNumber === 2) {
+            nextQuestion = 4;
+        }
+
+        if (nextQuestion <= 5) {
+            document.getElementById('question' + nextQuestion).classList.add('active');
+            updateProgress(seenPest ? nextQuestion : nextQuestion - 1);
+        }
+    }
+
+    function calculateAndShowResults() {
+        const selectedLocations = Array.from(document.querySelectorAll('input[name="location"]:checked'))
+            .map(checkbox => checkbox.value);
+        testData.answers.locations = selectedLocations;
+        if(selectedLocations.length === 0) {
+            testData.answers.locations = ['none'];
+        }
+        
+        document.getElementById('question5').classList.remove('active');
+        document.getElementById('results').classList.add('active');
+        updateProgress(5);
+        
+        const resultsHtml = calculateResults();
+        document.getElementById('results').innerHTML = resultsHtml + `
+            <a href="#" class="cta-button">Jetzt Schädlingsbekämpfung beauftragen</a>
+            <button onclick="restartTest()" class="restart-button">Test neu starten</button>
+        `;
+    }
+function calculateResults() {
+        const results = [];
+        
+        for (const [pest, data] of Object.entries(pestData)) {
+            let points = 0;
+            let maxPoints = data.maxPoints;
+            let isValidResult = true;
+
+            // Schädlingsspezifische Bewertung
+            switch(pest) {
+                case 'bettwanzen':
+                    // Ausschlusskriterien
+                    if (testData.answers.locations?.includes('garden') || 
+                        testData.answers.locations?.includes('basement')) {
+                        isValidResult = false;
+                    }
+                    
+                    if (isValidResult) {
+                        // Symptome
+                        if (testData.answers.signs?.includes('bites')) points += 5;
+                        if (testData.answers.signs?.includes('itching')) points += 5;
+                        if (testData.answers.signs?.includes('rash')) points += 4;
+                        
+                        // Aussehen (wenn gesehen)
+                        if (testData.answers.q1 === 'yes') {
+                            if (['flying-yellow', 'flying-dark', 'furry'].includes(testData.answers.q3)) {
+                                isValidResult = false;
+                            } else if (testData.answers.q3 === 'small-brown') {
+                                points += 5;
+                            }
+                        }
+                        
+                        // Orte
+                        if (testData.answers.locations?.includes('bedroom')) points += 5;
+                        if (testData.answers.locations?.includes('entire')) points += 3;
+                    }
+                    break;
+
+                case 'motten':
+                    // Hauptindikator: Löcher in Textilien
+                    if (!testData.answers.signs?.includes('holes')) {
+                        isValidResult = false;
+                    }
+                    
+                    if (isValidResult) {
+                        // Symptome
+                        if (testData.answers.signs?.includes('holes')) points += 5;
+                        
+                        // Aussehen (wenn gesehen)
+                        if (testData.answers.q1 === 'yes') {
+                            if (testData.answers.q3 === 'flying-dark') {
+                                points += 3;
+                            }
+                        }
+                        
+                        // Orte
+                        if (testData.answers.locations?.includes('bedroom')) points += 3;
+                        if (testData.answers.locations?.includes('entire')) points += 4;
+                        if (testData.answers.locations?.includes('basement')) points += 2;
+                    }
+                    break;
+
+                case 'ratten':
+                    // Ausschlusskriterien
+                    if (testData.answers.signs?.includes('bites')) {
+                        isValidResult = false;
+                    }
+                    
+                    if (isValidResult) {
+                        // Symptome
+                        if (testData.answers.signs?.includes('damage')) points += 5;
+                        if (testData.answers.signs?.includes('food')) points += 5;
+                        
+                        // Aussehen (wenn gesehen)
+                        if (testData.answers.q1 === 'yes') {
+                            if (['flying-yellow', 'flying-dark', 'small-brown', 'small-gray'].includes(testData.answers.q3)) {
+                                isValidResult = false;
+                            } else if (testData.answers.q3 === 'furry') {
+                                points += 5;
+                            }
+                        }
+                        
+                        // Orte
+                        if (testData.answers.locations?.includes('basement')) points += 4;
+                        if (testData.answers.locations?.includes('kitchen')) points += 4;
+                        if (testData.answers.locations?.includes('garden')) points += 3;
+                    }
+                    break;
+case 'mause':
+                    // Ausschlusskriterien
+                    if (testData.answers.signs?.includes('bites')) {
+                        isValidResult = false;
+                    }
+                    
+                    if (isValidResult) {
+                        // Symptome
+                        if (testData.answers.signs?.includes('damage')) points += 5;
+                        if (testData.answers.signs?.includes('food')) points += 5;
+                        
+                        // Aussehen (wenn gesehen)
+                        if (testData.answers.q1 === 'yes') {
+                            if (['flying-yellow', 'flying-dark'].includes(testData.answers.q3)) {
+                                isValidResult = false;
+                            } else if (testData.answers.q3 === 'furry') {
+                                points += 5;
+                            } else if (testData.answers.q3 === 'small-gray') {
+                                points += 4;
+                            }
+                        }
+                        
+                        // Orte
+                        if (testData.answers.locations?.includes('basement')) points += 4;
+                        if (testData.answers.locations?.includes('kitchen')) points += 4;
+                        if (testData.answers.locations?.includes('garden')) points += 3;
+                    }
+                    break;
+
+                case 'schaben':
+                    // Ausschlusskriterien
+                    if (testData.answers.signs?.includes('bites')) {
+                        isValidResult = false;
+                    }
+                    
+                    if (isValidResult) {
+                        // Symptome
+                        if (testData.answers.signs?.includes('food')) points += 5;
+                        if (testData.answers.signs?.includes('damage')) points += 4;
+                        
+                        // Aussehen (wenn gesehen)
+                        if (testData.answers.q1 === 'yes') {
+                            if (['flying-yellow', 'flying-dark', 'furry'].includes(testData.answers.q3)) {
+                                isValidResult = false;
+                            } else if (testData.answers.q3 === 'small-brown') {
+                                points += 5;
+                            }
+                        }
+                        
+                        // Orte
+                        if (testData.answers.locations?.includes('kitchen')) points += 5;
+                        if (testData.answers.locations?.includes('entire')) points += 4;
+                        if (testData.answers.locations?.includes('basement')) points += 3;
+                    }
+                    break;
+
+                case 'flohe':
+                    // Grundvoraussetzung: Haustiere oder Befall
+                    if (testData.answers.q4 === 'no' && !testData.answers.signs?.includes('bites')) {
+                        isValidResult = false;
+                    }
+                    
+                    if (isValidResult) {
+                        // Symptome
+                        if (testData.answers.signs?.includes('bites')) points += 5;
+                        if (testData.answers.signs?.includes('itching')) points += 5;
+                        if (testData.answers.signs?.includes('rash')) points += 4;
+                        
+                        // Aussehen (wenn gesehen)
+                        if (testData.answers.q1 === 'yes') {
+                            if (['flying-yellow', 'flying-dark', 'furry'].includes(testData.answers.q3)) {
+                                isValidResult = false;
+                            } else if (testData.answers.q3 === 'small-brown') {
+                                points += 4;
+                            } else if (testData.answers.q3 === 'small-gray') {
+                                points += 3;
+                            }
+                        }
+                        
+                        // Haustiere
+                        if (testData.answers.q4 === 'yes') points += 5;
+                        
+                        // Orte
+                        if (testData.answers.locations?.includes('entire')) points += 4;
+                    }
+                    break;
+case 'milben':
+                    // Ausschlusskriterien
+                    if (!testData.answers.signs?.some(sign => ['itching', 'rash'].includes(sign))) {
+                        isValidResult = false;
+                    }
+                    
+                    if (isValidResult) {
+                        // Symptome sind Hauptindikator
+                        if (testData.answers.signs?.includes('itching')) points += 5;
+                        if (testData.answers.signs?.includes('rash')) points += 5;
+                        
+                        // Aussehen ist nicht relevant (zu klein)
+                        if (testData.answers.q1 === 'yes') {
+                            points += 2; // Bonus für Sichtung
+                        }
+                        
+                        // Orte
+                        if (testData.answers.locations?.includes('bedroom')) points += 5;
+                        if (testData.answers.locations?.includes('entire')) points += 3;
+                        
+                        // Haustiere erhöhen Wahrscheinlichkeit
+                        if (testData.answers.q4 === 'yes') points += 5;
+                    }
+                    break;
+
+                case 'fliegen':
+                    // Ausschlusskriterien
+                    if (testData.answers.signs?.includes('bites')) {
+                        isValidResult = false;
+                    }
+                    
+                    if (isValidResult) {
+                        // Symptome
+                        if (testData.answers.signs?.includes('food')) points += 3;
+                        
+                        // Aussehen ist wichtiger Indikator
+                        if (testData.answers.q1 === 'yes') {
+                            if (testData.answers.q3 !== 'flying-dark') {
+                                isValidResult = false;
+                            } else {
+                                points += 5;
+                            }
+                        }
+                        
+                        // Orte
+                        if (testData.answers.locations?.includes('kitchen')) points += 4;
+                        if (testData.answers.locations?.includes('entire')) points += 3;
+                        if (testData.answers.locations?.includes('garden')) points += 2;
+                    }
+                    break;
+            }
+
+            // Berechnung der finalen Prozentzahl (maximal 80%)
+            if (isValidResult) {
+               let percentage = Math.round((points / maxPoints) * 80);
+                if (percentage > 80) percentage = 80;
+                if (percentage >= 40) {
+                    results.push({
+                        name: pest,
+                        percentage: percentage,
+                        characteristics: data.characteristics,
+                        urgency: data.urgency
+                    });
+                }
+            }
+        }
+
+        // Sortieren nach Prozentsatz
+        results.sort((a, b) => b.percentage - a.percentage);
+
+        // Wenn keine Ergebnisse gefunden
+        if (results.length === 0) {
+            return `
+                <h2>Keine eindeutigen Ergebnisse</h2>
+                <p>Basierend auf Ihren Angaben konnte kein eindeutiger Schädlingsbefall festgestellt werden. 
+                Für eine genaue Diagnose empfehlen wir eine professionelle Inspektion.</p>
+            `;
+        }
+
+        let html = '<h2>Ihre Ergebnisse:</h2>';
+
+        const germanNames = {
+            bettwanzen: 'Bettwanzen',
+            flohe: 'Flöhe',
+            ratten: 'Ratten',
+            mause: 'Mäuse',
+            schaben: 'Schaben',
+            milben: 'Milben',
+            fliegen: 'Fliegen',
+            motten: 'Motten'
+        };
+
+        results.forEach(result => {
+            const probabilityClass = 
+                result.percentage >= 80 ? 'probability-high' :
+                result.percentage >= 60 ? 'probability-medium' :
+                'probability-low';
+
+            const urgencyText =
+                result.urgency === 'high' ? 'Sehr hohe Dringlichkeit! ❗' :
+                result.urgency === 'medium' ? 'Hohe Dringlichkeit! ❗' :
+                'Mittlere Dringlichkeit ❗';
+
+            const urgencyClass =
+                result.urgency === 'high' ? 'urgency-high' :
+                result.urgency === 'medium' ? 'urgency-medium' :
+                'urgency-low';
+
+            html += `
+                <div class="result-item ${probabilityClass}">
+                    <h3>${germanNames[result.name]}</h3>
+                    <div class="probability-percentage">${result.percentage}% Wahrscheinlichkeit</div>
+                    <div class="urgency ${urgencyClass}">${urgencyText}</div>
+                    <div class="pest-info">
+                        <h4>Typische Merkmale:</h4>
+                        <ul>
+                            <li><strong>Verhalten:</strong> ${result.characteristics.verhalten}</li>
+                            <li><strong>Gefahr:</strong> ${result.characteristics.gefahr}</li>
+                            <li><strong>Behandlung:</strong> ${result.characteristics.behandlung}</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+        });
+
+        return html;
+    }
+
+    function restartTest() {
+        testData.answers = {};
+        seenPest = null;
+        document.querySelectorAll('.question-container, .results-container').forEach(container => {
+            container.classList.remove('active');
+        });
+        document.getElementById('question1').classList.add('active');
+        updateProgress(1);
+    }
+</script>
+</body>
+</html>
