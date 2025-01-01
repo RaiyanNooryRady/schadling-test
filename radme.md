@@ -1,0 +1,1 @@
+client schading test functionality (Hansbasel)
