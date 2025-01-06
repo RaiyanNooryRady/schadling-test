@@ -221,9 +221,19 @@
             margin: 10px 0;
             transition: all 0.3s;
         }
+        .hb-test-container{
+            padding-bottom: 80px;
+        }
+        @media(max-width:767px){
+            .hb-test-container{
+            padding-bottom: 40px;
+        }
+        }
     </style>
 </head>
 <body>
+    <div class="hb-test-container">
+    <h2 style="text-align: center;">Hier den kostenfreien Schädlings-Test machen:</h2>
     <div class="progress-container">
         <div class="progress-bar" id="progressBar" style="width: 20%">
             <span class="progress-text">20%</span>
@@ -311,6 +321,7 @@
 
     <!-- Ergebnisse -->
     <div class="results-container" id="results"></div>
+</div>
 <script>
     let seenPest = null;
     const testData = {
