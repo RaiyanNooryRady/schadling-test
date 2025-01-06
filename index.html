@@ -12,14 +12,14 @@
             --caution-color: #eab308;
         }
 
-        body {
+        /* body {
             font-family: Arial, sans-serif;
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
             background-color: #f0f9ff;
             font-size: 16px;
-        }
+        } */
 
         .progress-container {
             width: 100%;
@@ -56,7 +56,7 @@
         .question-container.active, .results-container.active {
             display: block;
         }
-.btn {
+.hb-btn {
             background-color: var(--primary-color);
             color: white;
             border: none;
@@ -71,7 +71,7 @@
             text-align: center;
         }
 
-        .btn:hover {
+        .hb-btn:hover {
             background-color: #1d4ed8;
         }
 
@@ -102,7 +102,7 @@
             height: 20px;
         }
 
-        h2 {
+        .hb-h2 {
             color: #1f2937;
             font-size: 24px;
             margin-bottom: 20px;
@@ -114,7 +114,7 @@
             margin: 15px 0;
         }
 
-        p {
+        .hb-p-tag {
             color: #4b5563;
             margin-bottom: 15px;
         }
@@ -232,16 +232,16 @@
 
     <!-- Frage 1 -->
     <div class="question-container active" id="question1">
-        <h2>Schädlings-Test</h2>
+        <h2 class="hb-h2">Schädlings-Test</h2>
         <h3>Haben Sie den Schädling gesehen?</h3>
-        <button type="button" class="btn" onclick="answerQuestion(1, 'yes')">Ja</button>
-        <button type="button" class="btn" onclick="answerQuestion(1, 'no')">Nein</button>
+        <button type="button" class="hb-btn" onclick="answerQuestion(1, 'yes')">Ja</button>
+        <button type="button" class="hb-btn" onclick="answerQuestion(1, 'no')">Nein</button>
     </div>
 
     <!-- Frage 2 -->
     <div class="question-container" id="question2">
-        <h2>Wie macht sich der Schädlingsbefall bemerkbar?</h2>
-        <p>Mehrere Antworten möglich</p>
+        <h2 class="hb-h2">Wie macht sich der Schädlingsbefall bemerkbar?</h2>
+        <p class="hb-p-tag">Mehrere Antworten möglich</p>
         <div class="checkbox-group">
             <label class="checkbox-label">
                 <input type="checkbox" name="signs" value="bites"> Bissspuren/Stiche am Körper
@@ -262,30 +262,30 @@
                 <input type="checkbox" name="signs" value="food"> Beschädigte Lebensmittelverpackungen
             </label>
         </div>
-        <button type="button" class="btn" onclick="answerQuestion(2)">Weiter</button>
+        <button type="button" class="hb-btn" onclick="answerQuestion(2)">Weiter</button>
     </div>
 
     <!-- Frage 3 -->
     <div class="question-container" id="question3">
-        <h2>Wie sieht der Schädling aus?</h2>
-        <button type="button" class="btn" onclick="answerQuestion(3, 'small-brown')">Klein und braun</button>
-        <button type="button" class="btn" onclick="answerQuestion(3, 'flying-yellow')">Fliegend und gelblich</button>
-        <button type="button" class="btn" onclick="answerQuestion(3, 'flying-dark')">Fliegend und dunkel</button>
-        <button type="button" class="btn" onclick="answerQuestion(3, 'small-gray')">Klein und grau</button>
-        <button type="button" class="btn" onclick="answerQuestion(3, 'furry')">Pelzig</button>
+        <h2 class="hb-h2">Wie sieht der Schädling aus?</h2>
+        <button type="button" class="hb-btn" onclick="answerQuestion(3, 'small-brown')">Klein und braun</button>
+        <button type="button" class="hb-btn" onclick="answerQuestion(3, 'flying-yellow')">Fliegend und gelblich</button>
+        <button type="button" class="hb-btn" onclick="answerQuestion(3, 'flying-dark')">Fliegend und dunkel</button>
+        <button type="button" class="hb-btn" onclick="answerQuestion(3, 'small-gray')">Klein und grau</button>
+        <button type="button" class="hb-btn" onclick="answerQuestion(3, 'furry')">Pelzig</button>
     </div>
 
     <!-- Frage 4 -->
     <div class="question-container" id="question4">
-        <h2>Haben Sie Haustiere?</h2>
-        <button type="button" class="btn" onclick="answerQuestion(4, 'yes')">Ja</button>
-        <button type="button" class="btn" onclick="answerQuestion(4, 'no')">Nein</button>
+        <h2 class="hb-h2">Haben Sie Haustiere?</h2>
+        <button type="button" class="hb-btn" onclick="answerQuestion(4, 'yes')">Ja</button>
+        <button type="button" class="hb-btn" onclick="answerQuestion(4, 'no')">Nein</button>
     </div>
 
     <!-- Frage 5 -->
     <div class="question-container" id="question5">
-        <h2>Wo wurde der Befall festgestellt?</h2>
-        <p>Mehrere Antworten möglich</p>
+        <h2 class="hb-h2">Wo wurde der Befall festgestellt?</h2>
+        <p class="hb-p-tag">Mehrere Antworten möglich</p>
         <div class="checkbox-group">
             <label class="checkbox-label">
                 <input type="checkbox" name="location" value="bedroom"> Schlafzimmer
@@ -306,7 +306,7 @@
                 <input type="checkbox" name="location" value="entire"> Gesamte Wohnung
             </label>
         </div>
-        <button type="button" class="btn" onclick="calculateAndShowResults()">Ergebnisse anzeigen</button>
+        <button type="button" class="hb-btn" onclick="calculateAndShowResults()">Ergebnisse anzeigen</button>
     </div>
 
     <!-- Ergebnisse -->
@@ -695,13 +695,13 @@ case 'milben':
         // Wenn keine Ergebnisse gefunden
         if (results.length === 0) {
             return `
-                <h2>Keine eindeutigen Ergebnisse</h2>
-                <p>Basierend auf Ihren Angaben konnte kein eindeutiger Schädlingsbefall festgestellt werden. 
+                <h2 class="hb-h2">Keine eindeutigen Ergebnisse</h2>
+                <p class="hb-p-tag">Basierend auf Ihren Angaben konnte kein eindeutiger Schädlingsbefall festgestellt werden. 
                 Für eine genaue Diagnose empfehlen wir eine professionelle Inspektion.</p>
             `;
         }
 
-        let html = '<h2>Ihre Ergebnisse:</h2>';
+        let html = '<h2 class="hb-h2">Ihre Ergebnisse:</h2>';
 
         const germanNames = {
             bettwanzen: 'Bettwanzen',
